@@ -37,7 +37,7 @@ class Message(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     role = Column(String(50), nullable=False)  # user, assistant, system
     text = Column(Text, nullable=False)
-    metadata = Column(JSON, default={})
+    extra_data = Column(JSON, default={})
     context_id = Column(String(100), index=True)  # conversation context
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     
@@ -55,7 +55,7 @@ class Memory(Base):
     # Vector embedding will be added after pgvector is properly set up
     # embedding_vector = Column(Vector(1536))  # For OpenAI embeddings
     tags = Column(JSON, default=[])
-    metadata = Column(JSON, default={})
+    extra_data = Column(JSON, default={})
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     
     # Relationships
@@ -72,7 +72,7 @@ class Reminder(Base):
     schedule = Column(String(255))  # cron expression or ISO datetime
     next_run = Column(DateTime, nullable=True)
     is_active = Column(Boolean, default=True)
-    metadata = Column(JSON, default={})
+    extra_data = Column(JSON, default={})
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     
     # Relationships
