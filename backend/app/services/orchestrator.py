@@ -170,10 +170,34 @@ class AgentOrchestrator:
         """
         Retrieve recent conversation context
         TODO: Implement vector similarity search for relevant memories
+        
+        For now, returns basic recent message history.
+        Future: Use pgvector for semantic search of memories.
         """
-        # For now, return empty context
-        # In production, query recent messages and relevant memories
-        return []
+        from sqlalchemy import select
+        from uuid import UUID
+        
+        try:
+            user_uuid = UUID(user_id)
+            # Get last 5 messages for basic context
+            stmt = (
+                select(Message)
+                .where(Message.user_id == user_uuid)
+                .order_by(Message.created_at.desc())
+                .limit(5)
+            )
+            result = await self.db.execute(stmt)
+            messages = result.scalars().all()
+            
+            # Format as context
+            context = [
+                {"role": msg.role, "content": msg.text}
+                for msg in reversed(messages)
+            ]
+            return context
+        except Exception:
+            # Return empty on error
+            return []
     
     async def _log_actions(
         self,

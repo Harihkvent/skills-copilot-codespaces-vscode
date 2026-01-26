@@ -21,6 +21,15 @@ class Settings(BaseSettings):
     
     # Security
     SECRET_KEY: str = "your-secret-key-change-in-production"
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if self.SECRET_KEY == "your-secret-key-change-in-production" and not self.DEBUG:
+            raise ValueError(
+                "SECRET_KEY must be set in production! "
+                "Generate a secure key: python -c 'import secrets; print(secrets.token_urlsafe(32))'"
+            )
+    
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
     

@@ -49,7 +49,8 @@ class WebSearchTool(BaseTool):
             num_results = args.get("num_results", 5)
             
             # For now, return a placeholder response
-            # In production, integrate with actual search API
+            # TODO: Integrate with actual search API (DuckDuckGo, SerpAPI, or Playwright scraping)
+            # See issue: https://github.com/Harihkvent/skills-copilot-codespaces-vscode/issues/TBD
             return ToolResult(
                 status="success",
                 result={

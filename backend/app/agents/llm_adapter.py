@@ -92,9 +92,15 @@ class LLMAdapter:
     ) -> Dict[str, Any]:
         """
         Call local LLM (Ollama or similar)
+        TODO: Integrate with Ollama API at LOCAL_LLM_URL
+        Steps needed:
+        1. Format messages for Ollama API format
+        2. Make HTTP request to {settings.LOCAL_LLM_URL}/api/generate
+        3. Parse structured response
+        4. Handle errors and timeouts
+        See: https://github.com/ollama/ollama/blob/main/docs/api.md
         """
         # For now, return a simple parsed response
-        # In production, integrate with Ollama API
         return self._fallback_plan(prompt)
     
     def _build_system_prompt(self, tools: List[Dict[str, Any]]) -> str:
