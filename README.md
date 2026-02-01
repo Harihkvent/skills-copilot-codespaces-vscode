@@ -2,13 +2,29 @@
 
 Astra is a modular voice-first AI assistant built with open-source components. It performs multi-agent reasoning, executes whitelisted tools (send email, run scripts, search the web), and keeps persistent memory.
 
-## 🚀 Quick Start
+## 🐳 Run Everything in Docker (Recommended)
 
-**Want to run Astra locally? See the [Complete Local Setup Guide →](LOCAL_SETUP.md)**
+**No need to install PostgreSQL, Redis, or Ollama locally!** Everything runs in Docker containers.
 
-Or use the automated setup scripts:
-- **Linux/Mac**: `./setup.sh`
-- **Windows**: `setup.bat`
+**🚀 Quick Start:**
+```bash
+git clone https://github.com/Harihkvent/skills-copilot-codespaces-vscode.git
+cd skills-copilot-codespaces-vscode
+cp .env.example .env
+docker-compose up --build
+```
+
+**That's it!** All dependencies (PostgreSQL, Redis, Ollama) run in containers.
+
+**📖 Complete Docker Guide:** See [DOCKER_SETUP.md](DOCKER_SETUP.md) for detailed instructions.
+
+## 📚 Other Setup Options
+
+**Want more control?** See [LOCAL_SETUP.md](LOCAL_SETUP.md) for manual setup.
+
+**Automated scripts:**
+- Linux/Mac: `./setup.sh`
+- Windows: `setup.bat`
 
 ## ✨ Key Features
 
@@ -23,13 +39,20 @@ Or use the automated setup scripts:
 
 ## 🚀 Tech Stack
 
+**All running in Docker containers:**
 - **Backend**: Python 3.11+ + FastAPI
-- **Database**: PostgreSQL + pgvector
-- **Cache**: Redis for queues
+- **Database**: PostgreSQL + pgvector (ankane/pgvector image)
+- **Cache**: Redis 7 Alpine
+- **LLM**: Ollama (runs locally in Docker, no API keys!)
 - **Auth**: JWT tokens with OAuth2
 - **Scheduler**: APScheduler for background tasks
-- **LLM**: Local (Ollama) or Cloud (Krutrim API)
 - **Client**: HTML/CSS/JavaScript (future: Electron + React)
+
+**Docker Services:**
+- `astra-postgres` - PostgreSQL with vector extension
+- `astra-redis` - Redis cache
+- `astra-ollama` - Local LLM (Llama2, Mistral, etc.)
+- `astra-api` - FastAPI backend
 
 ## 📁 Project Structure
 
