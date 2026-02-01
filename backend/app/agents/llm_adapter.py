@@ -46,10 +46,11 @@ class LLMAdapter:
         tools: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """
-        Call Krutrim API
+        Call Krutrim Cloud API
+        https://cloud.olakrutrim.com/
         """
         if not settings.KRUTRIM_API_KEY:
-            raise ValueError("KRUTRIM_API_KEY not configured")
+            raise ValueError("KRUTRIM_API_KEY not configured. Get your API key from https://cloud.olakrutrim.com/")
         
         # Build messages
         messages = context or []
@@ -68,9 +69,10 @@ class LLMAdapter:
                         "Content-Type": "application/json"
                     },
                     json={
-                        "model": "krutrim-v1",
+                        "model": "Krutrim-spectre-v2",
                         "messages": messages,
-                        "temperature": 0.7
+                        "temperature": 0.7,
+                        "max_tokens": 1000
                     },
                     timeout=30.0
                 )
@@ -81,6 +83,7 @@ class LLMAdapter:
                 return self._parse_llm_response(result["choices"][0]["message"]["content"])
                 
         except Exception as e:
+            print(f"Krutrim API error: {e}")
             # Fallback to simple parsing
             return self._fallback_plan(prompt)
     

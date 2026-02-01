@@ -4,17 +4,18 @@ Astra is a modular voice-first AI assistant built with open-source components. I
 
 ## 🐳 Run Everything in Docker (Recommended)
 
-**No need to install PostgreSQL, Redis, or Ollama locally!** Everything runs in Docker containers.
+**No need to install PostgreSQL or Redis locally!** Everything runs in Docker containers.
 
 **🚀 Quick Start:**
 ```bash
 git clone https://github.com/Harihkvent/skills-copilot-codespaces-vscode.git
 cd skills-copilot-codespaces-vscode
 cp .env.example .env
+# Add your Krutrim API key to .env file
 docker-compose up --build
 ```
 
-**That's it!** All dependencies (PostgreSQL, Redis, Ollama) run in containers.
+**That's it!** All dependencies (PostgreSQL, Redis) run in containers. Krutrim Cloud provides the AI intelligence.
 
 **📖 Complete Docker Guide:** See [DOCKER_SETUP.md](DOCKER_SETUP.md) for detailed instructions.
 
@@ -43,7 +44,7 @@ docker-compose up --build
 - **Backend**: Python 3.11+ + FastAPI
 - **Database**: PostgreSQL + pgvector (ankane/pgvector image)
 - **Cache**: Redis 7 Alpine
-- **LLM**: Ollama (runs locally in Docker, no API keys!)
+- **LLM**: Krutrim Cloud (India's first multilingual AI)
 - **Auth**: JWT tokens with OAuth2
 - **Scheduler**: APScheduler for background tasks
 - **Client**: HTML/CSS/JavaScript (future: Electron + React)
@@ -51,8 +52,13 @@ docker-compose up --build
 **Docker Services:**
 - `astra-postgres` - PostgreSQL with vector extension
 - `astra-redis` - Redis cache
-- `astra-ollama` - Local LLM (Llama2, Mistral, etc.)
 - `astra-api` - FastAPI backend
+
+**LLM Provider:**
+- 🇮🇳 **Krutrim Cloud** - Ola's multilingual AI platform
+  - Get API key: https://cloud.olakrutrim.com/
+  - Model: Krutrim-spectre-v2
+  - No local GPU required!
 
 ## 📁 Project Structure
 
@@ -93,11 +99,19 @@ cd skills-copilot-codespaces-vscode
 ```
 
 ### 2. Configure environment
-Copy `.env.example` to `.env` and fill in your credentials:
+Copy `.env.example` to `.env` and add your Krutrim API key:
 ```bash
 cp .env.example .env
-# Edit .env with your SMTP credentials and other settings
+# Edit .env and add:
+# KRUTRIM_API_KEY=your-api-key-from-cloud.olakrutrim.com
+# Also configure SMTP credentials for email sending
 ```
+
+**Get Krutrim API Key:**
+1. Visit https://cloud.olakrutrim.com/
+2. Sign up for an account
+3. Generate an API key
+4. Add it to your `.env` file
 
 ### 3. Start services with Docker Compose
 ```bash
@@ -108,6 +122,8 @@ This will start:
 - PostgreSQL with pgvector extension (port 5432)
 - Redis (port 6379)
 - FastAPI backend (port 8000)
+
+**Note:** Ollama is now optional. If you want to use local LLM instead of Krutrim, uncomment the ollama service in docker-compose.yml and set `LLM_PROVIDER=local` in your .env file.
 
 ### 4. Access the API
 The API will be available at: http://localhost:8000

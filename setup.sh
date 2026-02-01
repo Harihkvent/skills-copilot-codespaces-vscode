@@ -102,6 +102,24 @@ else
 fi
 
 echo ""
+print_info "🤖 Krutrim API Configuration"
+echo ""
+echo "Astra uses Krutrim AI for intelligent responses."
+echo "Get your API key from: https://cloud.olakrutrim.com/"
+echo ""
+read -p "Enter your Krutrim API key (or press Enter to skip): " KRUTRIM_KEY
+if [ ! -z "$KRUTRIM_KEY" ]; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s/KRUTRIM_API_KEY=.*/KRUTRIM_API_KEY=$KRUTRIM_KEY/" .env
+    else
+        sed -i "s/KRUTRIM_API_KEY=.*/KRUTRIM_API_KEY=$KRUTRIM_KEY/" .env
+    fi
+    print_success "Krutrim API key configured!"
+else
+    print_info "Skipped. You can add it later to .env file"
+fi
+
+echo ""
 echo "🐳 Step 3: Building Docker containers..."
 echo ""
 
@@ -164,22 +182,27 @@ echo "📖 Quick Links:"
 echo "   • API: http://localhost:8000"
 echo "   • API Docs (Swagger): http://localhost:8000/docs"
 echo "   • Health Check: http://localhost:8000/health"
-echo "   • Ollama: http://localhost:11434"
 echo ""
 echo "🌐 To use the Web Client:"
 echo "   1. Open: client/index.html in your browser"
 echo "   2. Register a new account"
 echo "   3. Login and start chatting!"
 echo ""
-echo "🤖 Download LLM Model (First Time):"
-echo "   docker exec -it astra-ollama ollama pull llama2"
-echo "   (This downloads a 3.8GB model for local AI)"
+echo "🤖 Using Krutrim AI:"
+echo "   ✅ Make sure you've added KRUTRIM_API_KEY to your .env file"
+echo "   ✅ Get your API key from: https://cloud.olakrutrim.com/"
+echo "   ✅ Krutrim provides India's first multilingual AI"
+echo ""
+echo "🔄 Want to use Local LLM instead?"
+echo "   1. Uncomment 'ollama' service in docker-compose.yml"
+echo "   2. Set LLM_PROVIDER=local in .env"
+echo "   3. Restart: docker-compose restart"
+echo "   4. Download model: docker exec -it astra-ollama ollama pull llama2"
 echo ""
 echo "📊 Useful Commands:"
 echo "   • View logs: docker-compose logs -f"
 echo "   • Stop services: docker-compose down"
 echo "   • Restart: docker-compose restart"
-echo "   • Check Ollama models: docker exec -it astra-ollama ollama list"
 echo ""
 print_info "See LOCAL_SETUP.md and DOCKER_SETUP.md for detailed documentation"
 echo ""
