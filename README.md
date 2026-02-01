@@ -2,50 +2,58 @@
 
 Astra is a modular voice-first AI assistant built with open-source components. It performs multi-agent reasoning, executes whitelisted tools (send email, run scripts, search the web), and keeps persistent memory.
 
-## Key features
-- Voice input (Whisper / Vosk)
-- LLM-based planning (Krutrim or local LLM)
-- Tool execution (mail, file, system commands)
-- Memory (Postgres + pgvector)
-- Multi-agent workflow (Planner / Critic / Executor)
+## ✨ Key Features
 
-## Tech stack
-- Python + FastAPI
-- PostgreSQL + pgvector
-- Redis for queues
-- Whisper / Vosk for STT
-- Coqui TTS for speech
-- Local LLM via Ollama / llama.cpp (or Krutrim API)
-- Electron + React for desktop UI
+- 🔐 **User Authentication** - Register, login with JWT tokens
+- 🤖 **Multi-Agent System** - Planner, Critic, Executor workflow
+- 🛠️ **Tool Execution** - Mail sending, web search, system commands
+- 📅 **Reminder Scheduler** - Cron-based reminders with APScheduler
+- 💾 **Persistent Memory** - PostgreSQL + pgvector for conversations
+- 🌐 **Web Interface** - Beautiful HTML client for easy interaction
+- 🔍 **Real Web Search** - DuckDuckGo integration, no API key needed
+- 📊 **Audit Trail** - Complete logging of all actions
 
-## Project Structure
+## 🚀 Tech Stack
+
+- **Backend**: Python 3.11+ + FastAPI
+- **Database**: PostgreSQL + pgvector
+- **Cache**: Redis for queues
+- **Auth**: JWT tokens with OAuth2
+- **Scheduler**: APScheduler for background tasks
+- **LLM**: Local (Ollama) or Cloud (Krutrim API)
+- **Client**: HTML/CSS/JavaScript (future: Electron + React)
+
+## 📁 Project Structure
 
 ```
 astra/
 ├── backend/              # FastAPI backend application
 │   ├── app/
 │   │   ├── agents/      # Agent implementations (Planner, Critic, Executor)
-│   │   ├── api/         # API endpoints
+│   │   ├── api/         # API endpoints (voice, command, auth, reminders)
 │   │   ├── core/        # Core configurations
 │   │   ├── models/      # Database models
-│   │   ├── services/    # Business logic services
-│   │   ├── tools/       # Tool implementations
+│   │   ├── services/    # Business logic (orchestrator, scheduler)
+│   │   ├── tools/       # Tool implementations (mail, search)
 │   │   └── main.py      # FastAPI application entry point
 │   ├── Dockerfile
-│   └── requirements.txt
-├── client/              # Electron + React desktop client (future)
+│   ├── requirements.txt
+│   └── test_comprehensive.py
+├── client/              # Web client interface
+│   ├── index.html       # Single-page web app
+│   └── README.md
 ├── logs/                # Application logs
 ├── docker-compose.yml   # Docker orchestration
 ├── .env.example         # Environment variables template
 └── README.md
 ```
 
-## Quickstart (dev)
+## 🎯 Quickstart (dev)
 
 ### Prerequisites
 - Docker and Docker Compose
 - Python 3.11+ (for local development)
-- Node.js 18+ (for client, optional)
+- Web browser (for client)
 
 ### 1. Clone repository
 ```bash
@@ -75,42 +83,93 @@ The API will be available at: http://localhost:8000
 
 API Documentation (Swagger): http://localhost:8000/docs
 
-### 5. (Optional) Run Electron client
+### 5. Use the Web Client
+Open `client/index.html` in your browser to access the web interface:
 ```bash
-cd client
-npm install
-npm run dev
+open client/index.html  # macOS
+xdg-open client/index.html  # Linux
+start client/index.html  # Windows
 ```
 
-## API Endpoints
+Then:
+1. Click "Register" to create an account
+2. Login with your credentials
+3. Start chatting with Astra!
+```
 
-### Health Check
+Then:
+1. Click "Register" to create an account
+2. Login with your credentials
+3. Start chatting with Astra!
+
+## 📖 API Endpoints
+
+### Health & Documentation
 ```bash
+# Health check
 curl http://localhost:8000/health
+
+# API docs (Swagger UI)
+open http://localhost:8000/docs
 ```
 
-### Voice Command
+### Authentication
 ```bash
+# Register
+curl -X POST http://localhost:8000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "john",
+    "email": "john@example.com",
+    "password": "secure123"
+  }'
+
+# Login
+curl -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=john&password=secure123"
+```
+
+### Commands (requires authentication)
+```bash
+# Voice Command
 curl -X POST http://localhost:8000/api/v1/voice \
   -H "Content-Type: application/json" \
+  -H "Authorization: ******" \
   -d '{
     "user_id": "user_123",
-    "transcript": "Astra, send mail to Ravi saying I will join tomorrow",
-    "locale": "en-IN"
+    "transcript": "Search for Python tutorials",
+    "locale": "en-US"
   }'
-```
 
-### Direct Command
-```bash
+# Direct Command
 curl -X POST http://localhost:8000/api/v1/command \
   -H "Content-Type: application/json" \
+  -H "Authorization: ******" \
   -d '{
     "user_id": "user_123",
-    "command": "send email to ravi@example.com"
+    "command": "search for artificial intelligence"
   }'
 ```
 
-## Configuration
+### Reminders (requires authentication)
+```bash
+# Create reminder
+curl -X POST http://localhost:8000/api/v1/reminders \
+  -H "Content-Type: application/json" \
+  -H "Authorization: ******" \
+  -d '{
+    "text": "Team meeting",
+    "schedule": "0 9 * * 1-5",
+    "next_run": "2026-02-03T09:00:00"
+  }'
+
+# List reminders
+curl http://localhost:8000/api/v1/reminders \
+  -H "Authorization: ******"
+```
+
+## ⚙️ Configuration
 
 Edit `.env` file with the following keys:
 - `DATABASE_URL`: PostgreSQL connection string
@@ -120,12 +179,12 @@ Edit `.env` file with the following keys:
 - `KRUTRIM_API_KEY`: API key if using Krutrim
 - `SECRET_KEY`: JWT secret for authentication
 
-## Development
+## 🔧 Development
 
 ### Run tests
 ```bash
 cd backend
-pytest
+pytest test_comprehensive.py -v
 ```
 
 ### Run linting
