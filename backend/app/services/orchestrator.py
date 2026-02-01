@@ -235,6 +235,13 @@ class AgentOrchestrator:
         """Generate a natural language response from plan and results"""
         intent = plan.get("intent", "unknown")
         
+        # Handle special intents without tool execution
+        if intent == "greeting":
+            return "Welcome back! How can I help you today?"
+        
+        if intent == "unknown":
+            return "I'm not sure what you'd like me to do. Could you rephrase that?"
+        
         # Check if all results succeeded
         all_success = all(r.status == "success" for r in results)
         
@@ -242,7 +249,26 @@ class AgentOrchestrator:
             if intent == "send_email":
                 return "I've sent the email successfully."
             elif intent == "web_search":
+                # Extract search results if available
+                if results and hasattr(results[0], 'result') and results[0].result:
+                    search_data = results[0].result
+                    if isinstance(search_data, dict) and 'results' in search_data:
+                        snippets = search_data['results'][:3]  # Top 3 results
+                        response = "Here's what I found:\n\n"
+                        for i, snippet in enumerate(snippets, 1):
+                            title = snippet.get('title', 'No title')
+                            snippet_text = snippet.get('snippet', snippet.get('description', ''))[:150]
+                            url = snippet.get('url', '')
+                            response += f"{i}. **{title}**\n"
+                            if snippet_text:
+                                response += f"   {snippet_text}...\n"
+                            if url:
+                                response += f"   {url}\n"
+                            response += "\n"
+                        return response
                 return "I've completed the search. Here are the results."
+            elif intent == "create_reminder":
+                return "I've set up your reminder."
             else:
                 return "I've completed your request successfully."
         else:

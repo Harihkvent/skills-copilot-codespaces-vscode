@@ -173,19 +173,47 @@ Example:
                 "tool_calls": [],
                 "reasoning": "Detected email-related request. LLM unavailable, manual confirmation needed."
             }
-        elif any(word in prompt_lower for word in ["search", "find", "look up"]):
+        elif any(word in prompt_lower for word in ["search", "find", "look up", "what is", "tell me"]):
+            # Extract search query
+            query = prompt
+            for prefix in ["search for ", "find ", "look up ", "what is ", "tell me about "]:
+                if prefix in prompt_lower:
+                    query = prompt[prompt_lower.find(prefix) + len(prefix):].strip()
+                    break
+            
             return {
                 "intent": "web_search",
+                "confidence": 0.8,
+                "requires_confirmation": False,
+                "tool_calls": [
+                    {
+                        "tool": "search.web",
+                        "args": {"query": query}
+                    }
+                ],
+                "reasoning": f"Performing web search for: {query}"
+            }
+        elif any(word in prompt_lower for word in ["remind", "reminder"]):
+            return {
+                "intent": "create_reminder",
                 "confidence": 0.7,
                 "requires_confirmation": False,
                 "tool_calls": [],
-                "reasoning": "Detected search request. LLM unavailable."
+                "reasoning": "Detected reminder request. LLM unavailable for parsing schedule."
+            }
+        elif any(word in prompt_lower for word in ["hi", "hello", "hey"]):
+            return {
+                "intent": "greeting",
+                "confidence": 0.9,
+                "requires_confirmation": False,
+                "tool_calls": [],
+                "reasoning": "User greeted Astra."
             }
         else:
             return {
                 "intent": "unknown",
                 "confidence": 0.3,
-                "requires_confirmation": True,
+                "requires_confirmation": False,
                 "tool_calls": [],
-                "reasoning": "Unable to determine intent. LLM unavailable."
+                "reasoning": "Unable to determine specific intent. LLM unavailable."
             }

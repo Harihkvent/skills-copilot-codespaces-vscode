@@ -63,7 +63,7 @@ class WebSearchTool(BaseTool):
                 response.raise_for_status()
                 
                 # Parse HTML results
-                results = self._parse_duckduckgo_html(response.text, num_results)
+                results = self._parse_duckduckgo_html(response.text, num_results, query)
                 
                 return ToolResult(
                     status="success",
@@ -90,7 +90,7 @@ class WebSearchTool(BaseTool):
                 error=f"Search failed: {str(e)}"
             )
     
-    def _parse_duckduckgo_html(self, html: str, max_results: int) -> list:
+    def _parse_duckduckgo_html(self, html: str, max_results: int, query: str = "") -> list:
         """
         Parse DuckDuckGo HTML results
         This is a simple parser - in production, use a proper HTML parser like BeautifulSoup
@@ -122,7 +122,7 @@ class WebSearchTool(BaseTool):
         if not results:
             results.append({
                 "title": "Search results",
-                "url": f"https://duckduckgo.com/?q={quote_plus(args.get('query', ''))}",
+                "url": f"https://duckduckgo.com/?q={quote_plus(query)}",
                 "snippet": "Click to see search results on DuckDuckGo"
             })
         
