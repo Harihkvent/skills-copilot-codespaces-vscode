@@ -2,6 +2,14 @@
 
 Astra is a modular voice-first AI assistant built with open-source components. It performs multi-agent reasoning, executes whitelisted tools (send email, run scripts, search the web), and keeps persistent memory.
 
+## 🚀 Quick Start
+
+**Want to run Astra locally? See the [Complete Local Setup Guide →](LOCAL_SETUP.md)**
+
+Or use the automated setup scripts:
+- **Linux/Mac**: `./setup.sh`
+- **Windows**: `setup.bat`
+
 ## ✨ Key Features
 
 - 🔐 **User Authentication** - Register, login with JWT tokens
